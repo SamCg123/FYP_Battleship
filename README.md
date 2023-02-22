@@ -4,7 +4,8 @@ Project code  : 22CS053 <br>
 Project title : A 2D turn-based strategy game against AI -Battleship <br>
 
 ### How to play?
-Open Battleship.exe in the file BattleshipGame
+1.  Download Battleship.zip and unzip it.
+2.  Open Battleship.exe 
 
 ### Where is the source code?
-You can find the source code in 56208961_FYP\Assets\Scripts
+You can find the source code in Assets\Scripts
