@@ -8,4 +8,4 @@ Project title : A 2D turn-based strategy game against AI -Battleship <br>
 2.  Open Battleship.exe 
 
 ### Where is the source code?
-You can find the source code in Assets\Scripts
+You can find the source code in Assets\Script
