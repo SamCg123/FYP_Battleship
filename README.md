@@ -1,5 +1,7 @@
 # Battleship
-A final year project of CHENG Ho Man, 56208961. <br>
+BSCCS Final Year Project <br>
+Student name  : CHENG Ho Man <br>
+Studnet no.   : 56208961 <br>
 Project code  : 22CS053 <br>
 Project title : A 2D turn-based strategy game against AI -Battleship <br>
 
