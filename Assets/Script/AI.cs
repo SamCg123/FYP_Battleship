@@ -272,65 +272,96 @@ public class AI : MonoBehaviour
         {
             int direction = hit[1] - hit[0]; 
             possibleIndex = hit[0] + direction;
-            if (possibleIndex > 99 || possibleIndex < 0 || (possibleIndex/10 != hit[0]/10))
+            if (possibleIndex > 99 || possibleIndex < 0 || ((possibleIndex/10 != hit[0]/10) && (direction == 1 || direction == -1)))
             {
                 direction *= -1;
                 possibleIndex += direction;
             } 
-            int run = 0;
-            int count = 0;
-            while (playerCells[possibleIndex] != -1 && run < 20 && count < remainingShip.Max())
+            int runCount = 0;
+            int hitCount = 0;
+            while (playerCells[possibleIndex] != -1 && runCount < 20 && hitCount < remainingShip.Max())
             {
                 possibleIndex += direction;
-                
                 if (possibleIndex > 99 || possibleIndex < 0 || playerCells[possibleIndex] == 0 || playerCells[possibleIndex] == 2 
                     || ((possibleIndex/10 != hit[0]/10) && (direction == 1 || direction == -1)))
                 {
                     direction *= -1;
                     possibleIndex += direction;
-                    count = 0;
+                    hitCount = 0;
                 }
-                if (playerCells[possibleIndex] == 1) {count++;}
-                if (playerCells[possibleIndex] == 2) {count=5;}
-                run++;
+                if (playerCells[possibleIndex] == 1) {hitCount++;}
+                if (playerCells[possibleIndex] == 2) {hitCount=5;}
+                runCount++;
             }
-            if (run > 19 || count >= remainingShip.Max()) // all cells in a row/column is searched or have 5 hit in a row, but still no sink
+            if (runCount >= 20 || hitCount >= remainingShip.Max()) // try the whole row/column or have 5 hit in a row, but still no sink
             {
-                if (direction % 10 == 0) 
+                if (direction % 10 == 0) // change direction
                 {
                     direction = UnityEngine.Random.Range(0, 1) * 2 - 1;
                 } else {
                     direction = (UnityEngine.Random.Range(0, 1) * 2 - 1) * 10;
                 }
                 possibleIndex = hit[0] + direction;
-                while (playerCells[possibleIndex] != -1)
+                int trials = 0;
+                if (possibleIndex > 99 || possibleIndex < 0 || ((possibleIndex/10 != hit[0]/10) && (direction == 1 || direction == -1)))
                 {
-                    if (possibleIndex > 99 || possibleIndex < 0 || playerCells[possibleIndex] == 0)
+                    direction *= -1;
+                    possibleIndex += direction;
+                    trials++;
+                }
+                while (playerCells[possibleIndex] != -1 && trials < 2)
+                {
+                    if (possibleIndex > 99 || possibleIndex < 0 || playerCells[possibleIndex] == 0 || playerCells[possibleIndex] == 2 
+                    || ((possibleIndex/10 != hit[0]/10) && (direction == 1 || direction == -1)))
                     {
                         direction *= -1;
+                        possibleIndex += direction;
+                        trials++;
                     }
                     possibleIndex += direction;
                 }
+                if (trials >= 2)
+                {
+                    bool hi =hitCount >= remainingShip.Max();
+                    Debug.Log("hitCount max "+hi);
+                    Debug.Log(runCount);
+                    possibleIndex = FindinNearCells(hit[0]);
+                    Debug.Log(possibleIndex);
+                    while (possibleIndex == -1)
+                    {
+                        hit.RemoveAt(0);
+                        possibleIndex = FindinNearCells(hit[0]);
+                    }
+                    Debug.Log(possibleIndex);
+                }
+                
             } 
         } else {
-            List<int> nearCells = new List<int>();
-            nearCells.Add(1); 
-            nearCells.Add(-1); 
-            nearCells.Add(10); 
-            nearCells.Add(-10);
-            if (hit[0] < 10) {nearCells.RemoveAt(3);}
-            if (hit[0] > 89) {nearCells.RemoveAt(2);}
-            if (hit[0] % 10 == 0) {nearCells.RemoveAt(1);}
-            if (hit[0] % 10 == 9) {nearCells.RemoveAt(0);}
-            
-            int direction = UnityEngine.Random.Range(0, nearCells.Count);
-            possibleIndex = hit[0] + nearCells[direction];
-            while(playerCells[possibleIndex] != -1 && nearCells.Count > 0)
-            {
-                nearCells.RemoveAt(direction);
-                direction = UnityEngine.Random.Range(0, nearCells.Count);
-                possibleIndex = hit[0] + nearCells[direction];
-            }
+            possibleIndex = FindinNearCells(hit[0]);
+        }
+        return possibleIndex;
+    }
+
+    private int FindinNearCells(int center)
+    {
+        int possibleIndex = -1;
+        List<int> nearCells = new List<int>();
+        nearCells.Add(1); 
+        nearCells.Add(-1); 
+        nearCells.Add(10); 
+        nearCells.Add(-10);
+        if (center < 10) {nearCells.RemoveAt(3);}
+        if (center > 89) {nearCells.RemoveAt(2);}
+        if (center % 10 == 0) {nearCells.RemoveAt(1);}
+        if (center % 10 == 9) {nearCells.RemoveAt(0);}
+        
+        int direction = UnityEngine.Random.Range(0, nearCells.Count);
+        possibleIndex = center + nearCells[direction];
+        while(playerCells[possibleIndex] != -1 && nearCells.Count > 0)
+        {
+            nearCells.RemoveAt(direction);
+            direction = UnityEngine.Random.Range(0, nearCells.Count);
+            possibleIndex = center + nearCells[direction];
         }
         return possibleIndex;
     }
